@@ -22,9 +22,10 @@ with DAG(
     dag_id='cfpb_daily_fetch',
     default_args=default_args,
     description='Daily fetch of CFPB complaints',
-    start_date=datetime(2025, 4, 16, 20, 15) ,   
-    schedule_interval="20 20 * * *" ,         
-    catchup=False
+    start_date=datetime(2024, 12, 15),   
+    schedule_interval="0 23 * * 1-5" ,         
+    catchup=False,
+    tags=['dev']
 ) as dag:
 
     fetch_task = PythonOperator(

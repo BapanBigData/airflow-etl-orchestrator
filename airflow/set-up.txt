@@ -24,7 +24,7 @@ docker exec -it airflow-airflow-scheduler-1 airflow dags trigger cfpb_daily_fetc
 ✅ 6. (Optional) Check Number of Trigger Runs
 docker exec -it airflow-airflow-scheduler-1 airflow dags list-runs -d <dag_id>
 docker exec -it airflow-airflow-scheduler-1 airflow dags list-runs -d cfpb_daily_fetch
-docker exec -it airflow-airflow-scheduler-1 airflow dags list-runs -d cfpb_daily_fetch_auto_tr
+docker exec -it airflow-airflow-scheduler-1 airflow dags list-runs -d first_dag_for_seq_tasks
 
 
 ✅7. Check the next scheduled run: [Deprecated Command]
