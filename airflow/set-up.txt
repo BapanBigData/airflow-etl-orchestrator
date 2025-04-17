@@ -1,0 +1,103 @@
+✅ 1. Start All Services Fresh
+docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml down
+
+
+✅ 2. Check Health of All Containers
+docker ps
+
+
+✅ 3. Check Airflow Services Are Healthy (Web + Scheduler)
+docker logs airflow-airflow-webserver-1 --tail 30
+docker logs airflow-airflow-scheduler-1 --tail 30
+
+
+✅ 4. (Optional) Test Scheduler Is Working [DAG List]
+docker exec -it airflow-airflow-scheduler-1 airflow dags list
+
+
+✅ 5. (Optional) Trigger a Test DAG Manually
+docker exec -it airflow-airflow-scheduler-1 airflow dags trigger <dag_id>
+docker exec -it airflow-airflow-scheduler-1 airflow dags trigger cfpb_daily_fetch_automatic
+
+
+✅ 6. (Optional) Check Number of Trigger Runs
+docker exec -it airflow-airflow-scheduler-1 airflow dags list-runs -d <dag_id>
+docker exec -it airflow-airflow-scheduler-1 airflow dags list-runs -d cfpb_daily_fetch
+docker exec -it airflow-airflow-scheduler-1 airflow dags list-runs -d cfpb_daily_fetch_auto_tr
+
+
+✅7. Check the next scheduled run: [Deprecated Command]
+docker exec -it airflow-airflow-scheduler-1 airflow dags next-execution -d cfpb_daily_fetch_auto_tr
+
+
+
+## To clean & rebuild
+docker compose -f docker-compose.yml down --volumes --remove-orphans
+
+
+## If first time or you removed volumes — reinitialize the Airflow DB
+docker compose run airflow-webserver airflow db init
+
+
+## Create Airflow Admin User for You
+docker compose run airflow-webserver airflow users create \
+  --username bapan \
+  --password bapan@123 \
+  --firstname Bapan \
+  --lastname Bairagya \
+  --role Admin \
+  --email bapanmldl7892@gmail.com
+
+
+##################################################################################################################################
+## Airflow DAG Not Running? Quick Rescue Playbook ##
+
+Problem Summary
+
+ 1. DAG was stuck in 'queued' and never moved to 'running'.
+   - Root Cause: Airflow Scheduler was broken due to a port conflict: ('::', 8793).
+ 2. Manual DAG triggers also stayed in 'queued'.
+   - Root Cause: Scheduler was not processing tasks properly due to Gunicorn port conflict.
+
+
+ Steps to Fix
+ 1. Restart the scheduler container to free up the port and reset the process:
+   $ docker restart airflow-airflow-scheduler-1
+
+ 2. Verify DAG is registered:
+   $ docker exec -it airflow-airflow-scheduler-1 airflow dags list
+
+ 3. Manually trigger the DAG:
+   $ docker exec -it airflow-airflow-scheduler-1 airflow dags trigger <dag_id>
+
+ 4. View scheduler logs to confirm it's alive and processing:
+   $ docker logs airflow-airflow-scheduler-1 --tail 100
+
+ Bonus Tips
+  - DAGs are scheduled to run after their interval passes. Use '*/5 * * * *' for testing.
+  - If you're stuck inside a container, type 'exit' to leave.
+  - Use Airflow UI > Graph or Gantt view > Task Logs to debug individual runs.
+  - Clean up config deprecation warning by moving 'sql_alchemy_conn' under [database] in airflow.cfg or .env.
+
+
+ Takeaway
+ If a DAG is stuck in 'queued', the Airflow Scheduler is likely unhealthy. Restarting it usually resolves the
+ issue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
