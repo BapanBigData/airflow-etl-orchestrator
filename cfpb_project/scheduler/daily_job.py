@@ -23,7 +23,7 @@ def run_daily_task():
     today = datetime.today()
     end_date_api = today.strftime('%Y-%m-%d')                # for API
     end_date_file = today.strftime('%Y-%m-%d_%H_%M')         # for filename
-    start_date = (today - timedelta(days=(1))).strftime('%Y-%m-%d')
+    start_date = (today - timedelta(days=(90))).strftime('%Y-%m-%d')
 
     # logging.info(f"🚀 Starting daily fetch from {start_date} to {end_date_api}")
     print(f"🚀 Starting daily fetch from {start_date} to {end_date_api}")

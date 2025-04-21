@@ -22,7 +22,7 @@ dag = DAG(
     default_args=default_args,
     description='A dummy DAG',
     start_date=datetime(2024, 12, 15),
-    schedule_interval="*/2 * * * *",
+    schedule_interval="* */6 * * *",
     catchup=False,
     tags=['dev'],
 )
